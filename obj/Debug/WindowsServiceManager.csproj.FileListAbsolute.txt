@@ -1,0 +1,10 @@
+C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.csproj.AssemblyReference.cache
+C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.Properties.Resources.resources
+C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.csproj.GenerateResource.cache
+C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.csproj.CoreCompileInputs.cache
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\WindowsServiceManager.exe.config
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\WindowsServiceManager.exe
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\WindowsServiceManager.pdb
+C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.exe
+C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.pdb
+C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.MainForm.resources
