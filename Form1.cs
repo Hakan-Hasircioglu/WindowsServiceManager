@@ -390,7 +390,6 @@ namespace WindowsServiceManager
             }
 
 
-
             // Continue restarting
             if (isRestarting)
             {
