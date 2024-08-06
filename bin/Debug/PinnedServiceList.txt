@@ -3,3 +3,6 @@ AppReadiness
 asus
 AJRouter
 XblAuthManager
+AppXSvc
+ALG
+AppIDSvc

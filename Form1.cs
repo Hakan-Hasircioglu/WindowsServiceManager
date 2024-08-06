@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace WindowsServiceManager
@@ -24,11 +25,17 @@ namespace WindowsServiceManager
         List<string> Non_Stop_Services = new List<string>();
         List<string> Pinned_Services = new List<string>();
         int nameIndex = 0;
-
+        private System.Timers.Timer[] timers;
+        int timersCount;
 
         public MainForm()
         {
             InitializeComponent();
+            ServiceController[] services = ServiceController.GetServices();
+            foreach (ServiceController service in services)
+            {
+                ServiceNamesComboBox.Items.Add(service.ServiceName);
+            }
 
             // Insert to table
             dataGridViewServices.CellClick += dataGridView1_CellContentClick;
@@ -41,6 +48,7 @@ namespace WindowsServiceManager
             Start_Click.Click += Start_ClickItem;
             Stop_Click.Click += Stop_ClickItem;
             Restart_Click.Click += Restart_ClickItem;
+            Kill_Click.Click += Kill_Click_Click;
             Start_Service_Button.Visible = false;
             Stop_Services_Button.Visible = false;
             Restart_Button.Visible = false;
@@ -266,6 +274,8 @@ namespace WindowsServiceManager
                 {
                     if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
                     {
+                        ToolStripMenuItem TSMP = new ToolStripMenuItem();
+
                         Start_Service_Button.Visible = true;
                         Stop_Services_Button.Visible = false;
                         Restart_Button.Visible = false;
@@ -273,7 +283,17 @@ namespace WindowsServiceManager
                         {
                             foreach (ToolStripMenuItem item in contextMenuStrip1.Items)
                             {
-
+                                if (serviceController.Status != ServiceControllerStatus.Stopped) // Other Situations
+                                {
+                                    if (item.Name == "Kill_Click")
+                                    {
+                                        item.Enabled = true;
+                                    }
+                                    else
+                                    {
+                                        item.Enabled = false;
+                                    }
+                                }
                                 if (item.Name == "Stop_Click")
                                 {
                                     item.Enabled = false;
@@ -427,6 +447,7 @@ namespace WindowsServiceManager
         {
 
         }
+
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
@@ -499,13 +520,49 @@ namespace WindowsServiceManager
                         {
                             serviceController.Stop();
                         }
-                        catch (InvalidOperationException ex)
+                        catch
                         {
-                            Console.WriteLine(ex.Message);
+                            // if cant't process or access
+                            Non_Stop_Services.Remove(selectedServiceName);
+                            if (!exitsAnyMessageBox) // dont't stack message boxes
+                            {
+                                exitsAnyMessageBox = true;
+                                MessageBox.Show("This service can't stop", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                exitsAnyMessageBox = false;
+                            }
                         }
-                        catch (System.ComponentModel.Win32Exception ex)
+                    }
+                }
+            }
+        }
+
+        private void Kill_Click_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(selectedServiceName))
+            {
+                using (ServiceController serviceController = new ServiceController(selectedServiceName))
+                {
+                    try
+                    {
+                        serviceController.Stop();
+                        Process[] process = Process.GetProcessesByName(selectedServiceName);
+                        if (process.Length > 0)
                         {
-                            Console.WriteLine(ex.Message);
+                            foreach (Process proc in process)
+                            {
+                                proc.Kill();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // if cant't process or access
+                        Non_Stop_Services.Remove(selectedServiceName);
+                        if (!exitsAnyMessageBox) // dont't stack message boxes
+                        {
+                            exitsAnyMessageBox = true;
+                            MessageBox.Show("This service can't stop", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            exitsAnyMessageBox = false;
                         }
                     }
                 }
@@ -526,19 +583,22 @@ namespace WindowsServiceManager
                             serviceController.Stop();
                             isRestarting = true;
                         }
-                        catch (InvalidOperationException ex)
+                        catch
                         {
-                            Console.WriteLine($"Occur some errors: {ex.Message}");
-                        }
-                        catch (System.ComponentModel.Win32Exception ex)
-                        {
-                            Console.WriteLine($"Access Error: {ex.Message}");
+                            // if cant't process or access
+                            Non_Stop_Services.Remove(selectedServiceName);
+                            if (!exitsAnyMessageBox) // dont't stack message boxes
+                            {
+                                exitsAnyMessageBox = true;
+                                MessageBox.Show("This service can't stop", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                exitsAnyMessageBox = false;
+                            }
                         }
                     }
                 }
             }
         }
-        #endregion 
+        #endregion
 
         private int MinLetter()
         {
@@ -727,7 +787,9 @@ namespace WindowsServiceManager
                 switch (service.Status)
                 {
                     case ServiceControllerStatus.Running:
-                        return "Running";
+                        {
+                            return "Running";
+                        }
                     case ServiceControllerStatus.Stopped:
                         return "Stopped";
                     case ServiceControllerStatus.Paused:
@@ -775,5 +837,130 @@ namespace WindowsServiceManager
         {
             Process.Start("services.msc");
         }
+
+        private void GoToServicesButton_Click_1(object sender, EventArgs e)
+        {
+            MainPanel.Visible = true;
+            WorkTimePanel.Visible = false;
+        }
+
+        private void WorkTimerForm_Button_Click_1(object sender, EventArgs e)
+        {
+            MainPanel.Visible = false;
+            WorkTimePanel.Visible = true;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MainPanel.Visible = false;
+            WorkTimePanel.Visible = true;
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void Add_WorkTime_Button_Click(object sender, EventArgs e)
+        {
+            timersCount++;
+            DataGridViewColumn firstColumn = dataGridViewServices.Columns[0];
+            ServiceController[] services = ServiceController.GetServices();
+            try
+            {
+                if (timersCount > 10)
+                {
+
+                    MessageBox.Show("Worker can not be more than ten.", "Limit crossed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    timersCount--;
+                }
+                else
+                {
+                    int timeInterval = Convert.ToInt32(TimeInterval.Text);
+                    string[] row = new string[2];
+                    if (timersCount < 10)
+                    {
+                        foreach (ServiceController service in services)
+                        {
+                            if (service.ServiceName == ServiceNamesComboBox.Text && timeInterval > 0)
+                            {
+                                row[0] = ServiceNamesComboBox.Text.ToString();
+                                row[1] = TimeInterval.Text.ToString();
+                                WorkTimeGrid.Rows.Add(row);
+                            }
+                        }
+                        if (row[0] == null)
+                        {
+                            MessageBox.Show("System can't found service name", "Unmatched", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            timersCount--;
+                        }
+                        else
+                        {
+                            #region Timers
+                            timers = new System.Timers.Timer[timersCount];
+                            timers[timersCount] = new System.Timers.Timer();
+                            timers[timersCount].Interval = Convert.ToInt32(TimeInterval.Text) * 1000;
+                            timers[timersCount].Elapsed += TimerElapsed;
+
+                            timers[timersCount].Start();
+                            #endregion
+                        }
+                    }
+                    else if (timeInterval <= 0)
+                    {
+                        MessageBox.Show("Time Interval's time Couldn't smaller than 1 ", "Unacceptable Number", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        timersCount--;
+
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Time Interval's time Couldn't empty ", "Unacceptable Number", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                timersCount--;
+            }
+        }
+        #region Timers Methods
+        private void TimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            StartService(TimeInterval.Text);         
+        }
+
+        private void StartService(string serviceName)
+        {
+            try
+            {
+                // ServiceController ile belirtilen servisi başlat
+                using (ServiceController service = new ServiceController(serviceName))
+                {
+                    // Servisin mevcut durumunu kontrol et
+                    if (service.Status == ServiceControllerStatus.Stopped || service.Status == ServiceControllerStatus.StopPending)
+                    {
+                        // Servisi başlat
+                        service.Start();
+                        service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30)); // Başlaması için 30 saniye bekle
+                        MessageBox.Show($"Servis '{serviceName}' başarıyla başlatıldı.");
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Servis '{serviceName}' zaten çalışıyor.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Servis başlatılırken hata oluştu: {ex.Message}");
+            }
+        }
+
+        #endregion
     }
 }

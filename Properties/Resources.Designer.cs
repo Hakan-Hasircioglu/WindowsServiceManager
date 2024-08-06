@@ -59,15 +59,5 @@ namespace WindowsServiceManager.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap pin_14879718 {
-            get {
-                object obj = ResourceManager.GetObject("pin_14879718", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }
