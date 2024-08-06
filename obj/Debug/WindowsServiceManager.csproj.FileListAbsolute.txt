@@ -7,4 +7,17 @@ C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\WindowsServiceManage
 C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\WindowsServiceManager.pdb
 C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.exe
 C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.pdb
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Buffers.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Memory.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Text.Json.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.ValueTuple.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Buffers.xml
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\hasir\source\repos\WindowsServiceManager\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsS.9C3407EB.Up2Date
 C:\Users\hasir\source\repos\WindowsServiceManager\obj\Debug\WindowsServiceManager.MainForm.resources

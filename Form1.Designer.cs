@@ -36,13 +36,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.dataGridViewServices = new System.Windows.Forms.DataGridView();
-            this.Name_Service = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.SearchBarLabel = new System.Windows.Forms.Label();
             this.Restart_Button = new System.Windows.Forms.Button();
             this.Stop_Services_Button = new System.Windows.Forms.Button();
@@ -51,13 +45,20 @@
             this.SearchBar = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.Start_Click = new System.Windows.Forms.ToolStripMenuItem();
             this.Stop_Click = new System.Windows.Forms.ToolStripMenuItem();
             this.Add_NonStopServices_Click = new System.Windows.Forms.ToolStripMenuItem();
-            this.Delete_NonStopServices_Click = new System.Windows.Forms.ToolStripMenuItem();
             this.pin_Click = new System.Windows.Forms.ToolStripMenuItem();
-            this.detailsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.Restart_Click = new System.Windows.Forms.ToolStripMenuItem();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Name_Service = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.OpenServices = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewServices)).BeginInit();
             this.panel1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -77,7 +78,7 @@
             this.Column2,
             this.Column3,
             this.Column4});
-            this.dataGridViewServices.Location = new System.Drawing.Point(1, 129);
+            this.dataGridViewServices.Location = new System.Drawing.Point(1, 105);
             this.dataGridViewServices.MultiSelect = false;
             this.dataGridViewServices.Name = "dataGridViewServices";
             this.dataGridViewServices.RowHeadersVisible = false;
@@ -85,67 +86,15 @@
             this.dataGridViewServices.RowTemplate.Height = 24;
             this.dataGridViewServices.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dataGridViewServices.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewServices.Size = new System.Drawing.Size(869, 421);
+            this.dataGridViewServices.Size = new System.Drawing.Size(869, 422);
             this.dataGridViewServices.TabIndex = 1;
             this.dataGridViewServices.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridViewServices.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewServices_CellEnter);
             this.dataGridViewServices.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewServices_CellValueChanged);
             this.dataGridViewServices.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridViewServices_MouseDown);
             // 
-            // Name_Service
-            // 
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Name_Service.DefaultCellStyle = dataGridViewCellStyle6;
-            this.Name_Service.HeaderText = "Name";
-            this.Name_Service.MinimumWidth = 6;
-            this.Name_Service.Name = "Name_Service";
-            this.Name_Service.ReadOnly = true;
-            this.Name_Service.Width = 125;
-            // 
-            // Column1
-            // 
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column1.DefaultCellStyle = dataGridViewCellStyle7;
-            this.Column1.HeaderText = "PID";
-            this.Column1.MinimumWidth = 6;
-            this.Column1.Name = "Column1";
-            this.Column1.ReadOnly = true;
-            this.Column1.Width = 50;
-            // 
-            // Column2
-            // 
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column2.DefaultCellStyle = dataGridViewCellStyle8;
-            this.Column2.HeaderText = "Description";
-            this.Column2.MinimumWidth = 6;
-            this.Column2.Name = "Column2";
-            this.Column2.ReadOnly = true;
-            this.Column2.Width = 200;
-            // 
-            // Column3
-            // 
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column3.DefaultCellStyle = dataGridViewCellStyle9;
-            this.Column3.HeaderText = "Status";
-            this.Column3.MinimumWidth = 6;
-            this.Column3.Name = "Column3";
-            this.Column3.ReadOnly = true;
-            this.Column3.Width = 60;
-            // 
-            // Column4
-            // 
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Column4.DefaultCellStyle = dataGridViewCellStyle10;
-            this.Column4.HeaderText = "Group";
-            this.Column4.MinimumWidth = 6;
-            this.Column4.Name = "Column4";
-            this.Column4.ReadOnly = true;
-            this.Column4.Width = 200;
-            // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.SearchBarLabel);
             this.panel1.Controls.Add(this.Restart_Button);
             this.panel1.Controls.Add(this.Stop_Services_Button);
@@ -153,16 +102,8 @@
             this.panel1.Controls.Add(this.ServiceHeader);
             this.panel1.Location = new System.Drawing.Point(1, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1009, 90);
+            this.panel1.Size = new System.Drawing.Size(869, 50);
             this.panel1.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(326, 39);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 16);
-            this.label1.TabIndex = 7;
             // 
             // SearchBarLabel
             // 
@@ -176,7 +117,7 @@
             // Restart_Button
             // 
             this.Restart_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.Restart_Button.Location = new System.Drawing.Point(742, 33);
+            this.Restart_Button.Location = new System.Drawing.Point(668, 4);
             this.Restart_Button.Name = "Restart_Button";
             this.Restart_Button.Size = new System.Drawing.Size(91, 41);
             this.Restart_Button.TabIndex = 4;
@@ -187,7 +128,7 @@
             // Stop_Services_Button
             // 
             this.Stop_Services_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.Stop_Services_Button.Location = new System.Drawing.Point(639, 40);
+            this.Stop_Services_Button.Location = new System.Drawing.Point(780, 7);
             this.Stop_Services_Button.Name = "Stop_Services_Button";
             this.Stop_Services_Button.Size = new System.Drawing.Size(75, 34);
             this.Stop_Services_Button.TabIndex = 3;
@@ -199,7 +140,7 @@
             // Start_Service_Button
             // 
             this.Start_Service_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.Start_Service_Button.Location = new System.Drawing.Point(639, 39);
+            this.Start_Service_Button.Location = new System.Drawing.Point(780, 7);
             this.Start_Service_Button.Name = "Start_Service_Button";
             this.Start_Service_Button.Size = new System.Drawing.Size(75, 35);
             this.Start_Service_Button.TabIndex = 2;
@@ -211,7 +152,7 @@
             // 
             this.ServiceHeader.AutoSize = true;
             this.ServiceHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 21F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.ServiceHeader.Location = new System.Drawing.Point(11, 13);
+            this.ServiceHeader.Location = new System.Drawing.Point(11, 4);
             this.ServiceHeader.Name = "ServiceHeader";
             this.ServiceHeader.Size = new System.Drawing.Size(160, 39);
             this.ServiceHeader.TabIndex = 0;
@@ -220,7 +161,7 @@
             // SearchBar
             // 
             this.SearchBar.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.SearchBar.Location = new System.Drawing.Point(19, 96);
+            this.SearchBar.Location = new System.Drawing.Point(12, 59);
             this.SearchBar.Name = "SearchBar";
             this.SearchBar.Size = new System.Drawing.Size(549, 30);
             this.SearchBar.TabIndex = 1;
@@ -239,12 +180,38 @@
             "All",
             "Non-Stop Services",
             "Pinned"});
-            this.comboBox1.Location = new System.Drawing.Point(640, 98);
+            this.comboBox1.Location = new System.Drawing.Point(662, 59);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(194, 30);
             this.comboBox1.Sorted = true;
             this.comboBox1.TabIndex = 3;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // Start_Click
+            // 
+            this.Start_Click.Name = "Start_Click";
+            this.Start_Click.Size = new System.Drawing.Size(210, 24);
+            this.Start_Click.Text = "Start";
+            // 
+            // Stop_Click
+            // 
+            this.Stop_Click.Name = "Stop_Click";
+            this.Stop_Click.Size = new System.Drawing.Size(210, 24);
+            this.Stop_Click.Text = "Stop";
+            // 
+            // Add_NonStopServices_Click
+            // 
+            this.Add_NonStopServices_Click.Name = "Add_NonStopServices_Click";
+            this.Add_NonStopServices_Click.Size = new System.Drawing.Size(210, 24);
+            this.Add_NonStopServices_Click.Text = "Non-Stop Services";
+            this.Add_NonStopServices_Click.Click += new System.EventHandler(this.NonStopServices_Click_Click);
+            // 
+            // pin_Click
+            // 
+            this.pin_Click.Name = "pin_Click";
+            this.pin_Click.Size = new System.Drawing.Size(210, 24);
+            this.pin_Click.Text = "Pin";
+            this.pin_Click.Click += new System.EventHandler(this.pin_Click_Click);
             // 
             // contextMenuStrip1
             // 
@@ -252,59 +219,97 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Start_Click,
             this.Stop_Click,
+            this.Restart_Click,
+            this.toolStripSeparator1,
             this.Add_NonStopServices_Click,
-            this.Delete_NonStopServices_Click,
             this.pin_Click,
-            this.detailsToolStripMenuItem});
+            this.toolStripSeparator2,
+            this.OpenServices});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(259, 180);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 188);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             this.contextMenuStrip1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.contextMenuStrip1_MouseDown);
             // 
-            // Start_Click
+            // Restart_Click
             // 
-            this.Start_Click.Name = "Start_Click";
-            this.Start_Click.Size = new System.Drawing.Size(258, 24);
-            this.Start_Click.Text = "Start";
+            this.Restart_Click.Name = "Restart_Click";
+            this.Restart_Click.Size = new System.Drawing.Size(210, 24);
+            this.Restart_Click.Text = "Restart";
+            this.Restart_Click.Click += new System.EventHandler(this.Restart_ClickItem);
             // 
-            // Stop_Click
+            // Column4
             // 
-            this.Stop_Click.Name = "Stop_Click";
-            this.Stop_Click.Size = new System.Drawing.Size(258, 24);
-            this.Stop_Click.Text = "Stop";
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.Column4.DefaultCellStyle = dataGridViewCellStyle6;
+            this.Column4.HeaderText = "Group";
+            this.Column4.MinimumWidth = 6;
+            this.Column4.Name = "Column4";
+            this.Column4.ReadOnly = true;
+            this.Column4.Width = 200;
             // 
-            // Add_NonStopServices_Click
+            // Column3
             // 
-            this.Add_NonStopServices_Click.Name = "Add_NonStopServices_Click";
-            this.Add_NonStopServices_Click.Size = new System.Drawing.Size(258, 24);
-            this.Add_NonStopServices_Click.Text = "Add Non-Stop Services";
-            this.Add_NonStopServices_Click.Click += new System.EventHandler(this.NonStopServices_Click_Click);
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column3.DefaultCellStyle = dataGridViewCellStyle7;
+            this.Column3.HeaderText = "Status";
+            this.Column3.MinimumWidth = 6;
+            this.Column3.Name = "Column3";
+            this.Column3.ReadOnly = true;
+            this.Column3.Width = 60;
             // 
-            // Delete_NonStopServices_Click
+            // Column2
             // 
-            this.Delete_NonStopServices_Click.Name = "Delete_NonStopServices_Click";
-            this.Delete_NonStopServices_Click.Size = new System.Drawing.Size(258, 24);
-            this.Delete_NonStopServices_Click.Text = "Remove Non-Stop Services";
-            this.Delete_NonStopServices_Click.Click += new System.EventHandler(this.Delete_NonStopServices_Click_Click);
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column2.DefaultCellStyle = dataGridViewCellStyle8;
+            this.Column2.HeaderText = "Description";
+            this.Column2.MinimumWidth = 6;
+            this.Column2.Name = "Column2";
+            this.Column2.ReadOnly = true;
+            this.Column2.Width = 200;
             // 
-            // pin_Click
+            // Column1
             // 
-            this.pin_Click.Name = "pin_Click";
-            this.pin_Click.Size = new System.Drawing.Size(258, 24);
-            this.pin_Click.Text = "Pin";
-            this.pin_Click.Click += new System.EventHandler(this.pin_Click_Click);
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column1.DefaultCellStyle = dataGridViewCellStyle9;
+            this.Column1.HeaderText = "PID";
+            this.Column1.MinimumWidth = 6;
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.Width = 50;
             // 
-            // detailsToolStripMenuItem
+            // Name_Service
             // 
-            this.detailsToolStripMenuItem.Name = "detailsToolStripMenuItem";
-            this.detailsToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
-            this.detailsToolStripMenuItem.Text = "Details";
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Name_Service.DefaultCellStyle = dataGridViewCellStyle10;
+            this.Name_Service.HeaderText = "Name";
+            this.Name_Service.MinimumWidth = 6;
+            this.Name_Service.Name = "Name_Service";
+            this.Name_Service.ReadOnly = true;
+            this.Name_Service.Width = 125;
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(207, 6);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(207, 6);
+            // 
+            // OpenServices
+            // 
+            this.OpenServices.Name = "OpenServices";
+            this.OpenServices.Size = new System.Drawing.Size(210, 24);
+            this.OpenServices.Text = "Open Services";
+            this.OpenServices.Click += new System.EventHandler(this.OpenServices_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(868, 548);
+            this.ClientSize = new System.Drawing.Size(868, 526);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dataGridViewServices);
@@ -337,16 +342,17 @@
         private System.Windows.Forms.ToolStripMenuItem Start_Click;
         private System.Windows.Forms.ToolStripMenuItem Stop_Click;
         private System.Windows.Forms.ToolStripMenuItem Add_NonStopServices_Click;
+        private System.Windows.Forms.ToolStripMenuItem pin_Click;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem Restart_Click;
         private System.Windows.Forms.DataGridViewTextBoxColumn Name_Service;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
-        private System.Windows.Forms.ToolStripMenuItem Delete_NonStopServices_Click;
-        private System.Windows.Forms.ToolStripMenuItem pin_Click;
-        private System.Windows.Forms.ToolStripMenuItem detailsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem OpenServices;
     }
 }
 

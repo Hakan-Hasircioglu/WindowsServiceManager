@@ -1,26 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Windows.Forms;
 
 namespace WindowsServiceManager
 {
+
+    [Serializable]
     public partial class MainForm : Form
     {
         // Variables
+        private string Non_StopServices_filePath = "NonStopServiceList.txt";
+        private string Pinned_filePath = "PinnedServiceList.txt";
         string selectedServiceName;
         bool servicesIsRunning;
         bool isRestarting;
         bool showOnlyNonStopServices;
+        bool showOnlyPinned;
+        bool exitsAnyMessageBox;
         List<string> Non_Stop_Services = new List<string>();
         List<string> Pinned_Services = new List<string>();
         int nameIndex = 0;
 
+
         public MainForm()
         {
             InitializeComponent();
+
             // Insert to table
             dataGridViewServices.CellClick += dataGridView1_CellContentClick;
             SearchBar.Text = "";
@@ -28,49 +37,17 @@ namespace WindowsServiceManager
             LoadServices();
             timer1.Start();
             dataGridViewServices.ClearSelection();
+
+            Start_Click.Click += Start_ClickItem;
+            Stop_Click.Click += Stop_ClickItem;
+            Restart_Click.Click += Restart_ClickItem;
+            Start_Service_Button.Visible = false;
+            Stop_Services_Button.Visible = false;
+            Restart_Button.Visible = false;
+            Non_StopServices_filePath_LoadListFromFile();
+            Pinned_filePath_LoadListFromFile();
         }
 
-        #region Context Menu Buttons
-        private void Start_ClickItem(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(selectedServiceName))
-            {
-                using (ServiceController serviceController = new ServiceController(selectedServiceName))
-                {
-                    if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
-                    {
-                        serviceController.Start();
-                        serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30)); // Wait for Running
-                    }
-                }
-            }
-        }
-
-        private void Stop_ClickItem(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(selectedServiceName))
-            {
-                using (ServiceController serviceController = new ServiceController(selectedServiceName))
-                {
-                    if (serviceController.Status == ServiceControllerStatus.Running) // If service working
-                    {
-                        try
-                        {
-                            serviceController.Stop();
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                        catch (System.ComponentModel.Win32Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                }
-            }
-        }
-        #endregion
 
         // Load if matching services, load all services some situation
         private void LoadServices()
@@ -81,12 +58,76 @@ namespace WindowsServiceManager
 
             foreach (ServiceController service in servicesList)
             {
-                // If matching to Search bar text
-                if (showOnlyNonStopServices)
+                foreach (string item in Pinned_Services)
+                {
+                    if (showOnlyNonStopServices && Non_Stop_Services.Contains(item))
+                    {
+                        if (service.ServiceName == item && service.ServiceName.IndexOf(SearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            #region Get PID
+                            int pid;
+                            try
+                            {
+                                var process = Process.GetProcessesByName(service.ServiceName).FirstOrDefault();
+                                pid = process?.Id ?? 0;
+                            }
+                            catch
+                            {
+                                pid = 0;
+                            }
+                            #endregion
+
+                            // Assign value to row
+                            string[] row = new string[]
+                            {
+                service.ServiceName,
+                pid.ToString(),
+                service.DisplayName,
+                service.Status.ToString(),
+                service.ServiceType.ToString()
+                            };
+
+                            dataGridViewServices.Rows.Add(row);
+                        }
+                    }
+                    else if (showOnlyNonStopServices && !Non_Stop_Services.Contains(item) && service.ServiceName.IndexOf(SearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // Pass 
+                    }
+                    else if (service.ServiceName.IndexOf(SearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        if (service.ServiceName == item && service.ServiceName.IndexOf(SearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            #region Get PID
+                            int pid;
+                            try
+                            {
+                                var process = Process.GetProcessesByName(service.ServiceName).FirstOrDefault();
+                                pid = process?.Id ?? 0;
+                            }
+                            catch
+                            {
+                                pid = 0;
+                            }
+                            #endregion
+
+                            // Assign value to row
+                            string[] row = new string[] {
+                                service.ServiceName,
+                                pid.ToString(),
+                                service.DisplayName,
+                                service.Status.ToString(),
+                                service.ServiceType.ToString()
+                            };
+                            dataGridViewServices.Rows.Add(row);
+                        }
+                    }
+                }
+                if (!showOnlyPinned && showOnlyNonStopServices && service.ServiceName.IndexOf(SearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     foreach (string item in Non_Stop_Services)
                     {
-                        if (service.ServiceName == item)
+                        if (service.ServiceName == item && !Pinned_Services.Contains(service.ServiceName)) // Don't add services again
                         {
                             #region Get PID
                             int pid;
@@ -115,7 +156,8 @@ namespace WindowsServiceManager
                         }
                     }
                 }
-                else if (service.ServiceName.IndexOf(SearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                // If matching to Search bar text
+                else if (!showOnlyPinned && service.ServiceName.IndexOf(SearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0 && !Pinned_Services.Contains(service.ServiceName)) // Don't add services again)
                 {
                     #region Get PID
                     int pid;
@@ -142,7 +184,6 @@ namespace WindowsServiceManager
 
                     dataGridViewServices.Rows.Add(row);
                 }
-
             }
         }
 
@@ -177,11 +218,13 @@ namespace WindowsServiceManager
                     {
                         Start_Service_Button.Visible = false;
                         Stop_Services_Button.Visible = true;
+                        Restart_Button.Visible = true;
                     }
                     else
                     {
                         Start_Service_Button.Visible = true;
                         Stop_Services_Button.Visible = false;
+                        Restart_Button.Visible = false;
                     }
                 }
             }
@@ -197,44 +240,91 @@ namespace WindowsServiceManager
                 dataGridViewServices.Rows[hitTestInfo.RowIndex].Selected = true;
                 selectedServiceName = dataGridViewServices.SelectedRows[nameIndex].Cells[0].Value.ToString();
 
+
+                ToolStripMenuItem added = contextMenuStrip1.Items["Add_NonStopServices_Click"] as ToolStripMenuItem;
+                ToolStripMenuItem pinned = contextMenuStrip1.Items["pin_Click"] as ToolStripMenuItem;
+
+                if (Non_Stop_Services.Contains(selectedServiceName))
+                {
+                    added.Checked = true;
+                }
+                else
+                {
+                    added.Checked = false;
+                }
+
+                if (Pinned_Services.Contains(selectedServiceName))
+                {
+                    pinned.Checked = true;
+                }
+                else
+                {
+                    pinned.Checked = false;
+                }
+
                 using (ServiceController serviceController = new ServiceController(selectedServiceName))
                 {
                     if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
                     {
                         Start_Service_Button.Visible = true;
                         Stop_Services_Button.Visible = false;
-                        foreach (ToolStripMenuItem item in contextMenuStrip1.Items)
+                        Restart_Button.Visible = false;
+                        try
                         {
-                            if (item.Name == "Start_Click")
+                            foreach (ToolStripMenuItem item in contextMenuStrip1.Items)
                             {
-                                item.Enabled = true;
-                            }
-                            else if (item.Name == "Stop_Click")
-                            {
-                                item.Enabled = false;
-                            }
 
+                                if (item.Name == "Stop_Click")
+                                {
+                                    item.Enabled = false;
+                                }
+                                else if (item.Name == "Restart_Click")
+                                {
+                                    item.Enabled = false;
+                                }
+                                else if (item.Name == "Start_Click")
+                                {
+                                    item.Enabled = true;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Pass
                         }
                     }
                     else
                     {
                         Start_Service_Button.Visible = false;
                         Stop_Services_Button.Visible = true;
-                        foreach (ToolStripMenuItem item in contextMenuStrip1.Items)
+                        Restart_Button.Visible = true;
+                        try
                         {
-                            if (item.Name == "Stop_Click")
+                            foreach (ToolStripMenuItem item in contextMenuStrip1.Items)
                             {
-                                item.Enabled = true;
+                                if (item.Name == "Stop_Click")
+                                {
+                                    item.Enabled = true;
+                                }
+                                else if (item.Name == "Restart_Click")
+                                {
+                                    item.Enabled = true;
+                                }
+                                else if (item.Name == "Start_Click")
+                                {
+                                    item.Enabled = false;
+                                }
                             }
-                            else if (item.Name == "Start_Click")
-                            {
-                                item.Enabled = false;
-                            }
-
+                        }
+                        catch
+                        {
+                            // Pass
                         }
                     }
                 }
+
                 contextMenuStrip1.Show(dataGridViewServices, e.Location);
+
             }
         }
 
@@ -257,10 +347,22 @@ namespace WindowsServiceManager
             {
                 using (ServiceController serviceController = new ServiceController(selectedServiceName))
                 {
-                    if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
+                    try
                     {
                         serviceController.Start();
-                        serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30)); // Wait for Running
+                        // Wait for Running
+                        serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+                    }
+                    catch
+                    {
+                        // if cant't process or access
+                        Non_Stop_Services.Remove(selectedServiceName);
+                        if (!exitsAnyMessageBox) // dont't stack message boxes
+                        {
+                            exitsAnyMessageBox = true;
+                            MessageBox.Show("This service can't start", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            exitsAnyMessageBox = false;
+                        }
                     }
                 }
             }
@@ -320,6 +422,124 @@ namespace WindowsServiceManager
         }
         #endregion
 
+        #region Context Menu Strip // Right Click Events
+        private void contextMenuStrip1_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
+
+        private void NonStopServices_Click_Click(object sender, EventArgs e)
+        {
+            if (!Non_Stop_Services.Contains(selectedServiceName))
+            {
+                Non_Stop_Services.Add(selectedServiceName);
+            }
+            else
+            {
+                Non_Stop_Services.Remove(selectedServiceName);
+            }
+
+            LoadServices();
+        }
+
+        private void pin_Click_Click(object sender, EventArgs e)
+        {
+            if (!Pinned_Services.Contains(selectedServiceName))
+            {
+                Pinned_Services.Add(selectedServiceName);
+            }
+            else
+            {
+                Pinned_Services.Remove(selectedServiceName);
+            }
+
+            LoadServices();
+        }
+
+        private void Start_ClickItem(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(selectedServiceName))
+            {
+                using (ServiceController serviceController = new ServiceController(selectedServiceName))
+                {
+                    try
+                    {
+                        serviceController.Start();
+                        // Wait for Running
+                        serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+                    }
+                    catch
+                    {
+                        // if cant't process or access
+                        Non_Stop_Services.Remove(selectedServiceName);
+                        if (!exitsAnyMessageBox) // dont't stack message boxes
+                        {
+                            exitsAnyMessageBox = true;
+                            MessageBox.Show("This service can't start", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            exitsAnyMessageBox = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Stop_ClickItem(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(selectedServiceName))
+            {
+                using (ServiceController serviceController = new ServiceController(selectedServiceName))
+                {
+                    if (serviceController.Status == ServiceControllerStatus.Running) // If service working
+                    {
+                        try
+                        {
+                            serviceController.Stop();
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                        catch (System.ComponentModel.Win32Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Restart_ClickItem(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(selectedServiceName))
+            {
+                using (ServiceController serviceController = new ServiceController(selectedServiceName))
+                {
+                    if (serviceController.Status == ServiceControllerStatus.Running || serviceController.Status == ServiceControllerStatus.Paused)
+                    {
+                        try
+                        {
+                            // First stop the service
+                            serviceController.Stop();
+                            isRestarting = true;
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Console.WriteLine($"Occur some errors: {ex.Message}");
+                        }
+                        catch (System.ComponentModel.Win32Exception ex)
+                        {
+                            Console.WriteLine($"Access Error: {ex.Message}");
+                        }
+                    }
+                }
+            }
+        }
+        #endregion 
+
         private int MinLetter()
         {
             int letterCounter = 0;
@@ -361,6 +581,9 @@ namespace WindowsServiceManager
         // Update Service Statuses for check status every second
         private void timer1_Tick(object sender, EventArgs e)
         {
+            Non_StopServices_filePath_SaveListToFile();
+            PinnedServices_filePath_SaveListToFile();
+
             UpdateAllServiceStatuses();
 
             // Non-Stop Services
@@ -372,23 +595,40 @@ namespace WindowsServiceManager
                     if (!item.IsNewRow)
                     {
                         firstCellValue = item.Cells[0].Value?.ToString();
-                    }
 
-                    if (firstCellValue == ServiceNames)
-                    {
-                        using (ServiceController serviceController = new ServiceController(selectedServiceName))
+                        if (firstCellValue == ServiceNames)
                         {
-                            if (serviceController.Status != ServiceControllerStatus.Running)
+                            if (!string.IsNullOrEmpty(ServiceNames) && !string.IsNullOrEmpty(firstCellValue))
                             {
-                                serviceController.Start();
-                                serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30)); // Wait for Running
+                                using (ServiceController serviceController = new ServiceController(ServiceNames))
+                                {
+                                    if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
+                                    {
+                                        try
+                                        {
+                                            serviceController.Start();
+                                            // Wait for Running
+                                            serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+                                        }
+                                        catch
+                                        {
+                                            // if cant't process or access
+                                            Non_Stop_Services.Remove(ServiceNames);
+                                            if (!exitsAnyMessageBox) // dont't stack message boxes
+                                            {
+                                                exitsAnyMessageBox = true;
+                                                MessageBox.Show("This service can't start", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                                exitsAnyMessageBox = false;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-
                 }
             }
-
 
             // Continue restarting
             if (isRestarting)
@@ -404,6 +644,56 @@ namespace WindowsServiceManager
                 isRestarting = false;
             }
         }
+
+        #region Pinned Services Save - Load
+        private void PinnedServices_filePath_SaveListToFile()
+        {
+            File.WriteAllLines(Pinned_filePath, Pinned_Services);
+        }
+
+        private void Pinned_filePath_LoadListFromFile()
+        {
+            if (File.Exists(Pinned_filePath))
+            {
+                Pinned_Services = new List<string>(File.ReadAllLines(Pinned_filePath));
+            }
+        }
+        #endregion
+
+        #region Non-Stop Services Save - Load
+        private void Non_StopServices_filePath_SaveListToFile()
+        {
+            try
+            {
+                File.WriteAllLines(Non_StopServices_filePath, Non_Stop_Services);
+                Console.WriteLine("Liste başarıyla kaydedildi.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Hata oluştu: {ex.Message}");
+            }
+        }
+
+        private void Non_StopServices_filePath_LoadListFromFile()
+        {
+            try
+            {
+                if (File.Exists(Non_StopServices_filePath))
+                {
+                    Non_Stop_Services = new List<string>(File.ReadAllLines(Non_StopServices_filePath));
+                    Console.WriteLine("Liste başarıyla yüklendi.");
+                }
+                else
+                {
+                    Console.WriteLine("Dosya bulunamadı.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Hata oluştu: {ex.Message}");
+            }
+        }
+        #endregion
 
         // Update every service statuses
         private void UpdateAllServiceStatuses()
@@ -456,39 +746,6 @@ namespace WindowsServiceManager
             }
         }
 
-        private void contextMenuStrip1_MouseDown(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void NonStopServices_Click_Click(object sender, EventArgs e)
-        {
-            if (!Non_Stop_Services.Contains(selectedServiceName))
-            {
-                Non_Stop_Services.Add(selectedServiceName);
-            }
-            ToolStripMenuItem delNonStopServices = contextMenuStrip1.Items["Delete_NonStopServices_Click"] as ToolStripMenuItem;
-            ToolStripMenuItem addNonStopServices = contextMenuStrip1.Items["Add_NonStopServices_Click"] as ToolStripMenuItem;
-
-            addNonStopServices.Visible = false;
-            delNonStopServices.Visible = true;
-        }
-
-        private void Delete_NonStopServices_Click_Click(object sender, EventArgs e)
-        {
-            Non_Stop_Services.Remove(selectedServiceName);
-            ToolStripMenuItem delNonStopServices = contextMenuStrip1.Items["Delete_NonStopServices_Click"] as ToolStripMenuItem;
-            ToolStripMenuItem addNonStopServices = contextMenuStrip1.Items["Add_NonStopServices_Click"] as ToolStripMenuItem;
-
-            addNonStopServices.Visible = true;
-            delNonStopServices.Visible = false;
-
-            if (showOnlyNonStopServices)
-            {
-                LoadServices();
-            }
-        }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selectedItem = comboBox1.SelectedItem as string;
@@ -497,24 +754,26 @@ namespace WindowsServiceManager
                 if (selectedItem == "All")
                 {
                     showOnlyNonStopServices = false;
+                    showOnlyPinned = false;
                 }
                 else if (selectedItem == "Non-Stop Services")
                 {
                     showOnlyNonStopServices = true;
+                    showOnlyPinned = false;
+                }
+                else if (selectedItem == "Pinned")
+                {
+                    showOnlyNonStopServices = false;
+                    showOnlyPinned = true;
                 }
 
                 LoadServices();
             }
         }
 
-        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void OpenServices_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void pin_Click_Click(object sender, EventArgs e)
-        {
-
+            Process.Start("services.msc");
         }
     }
 }
