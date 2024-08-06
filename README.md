@@ -1,3 +1,3 @@
 README.md
 
-[Simple Design](C:\Users\hasir\source\repos\WindowsServiceManager)
+![Simple Design](SimpleDesign.png)
