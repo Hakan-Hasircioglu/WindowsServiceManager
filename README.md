@@ -1,6 +1,6 @@
 # Windows Service Manager
 
-Developmented for [İletişim Yazılım](https://www.iletisimyazilim.com/)
+Developed for [İletişim Yazılım](https://www.iletisimyazilim.com/)
 
 Inspired from the Windows Services Menu and it Attend to Next Level
 
