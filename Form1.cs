@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
-using System.Timers;
 using System.Windows.Forms;
 
 namespace WindowsServiceManager
@@ -25,17 +24,31 @@ namespace WindowsServiceManager
         List<string> Non_Stop_Services = new List<string>();
         List<string> Pinned_Services = new List<string>();
         int nameIndex = 0;
-        private System.Timers.Timer[] timers;
         int timersCount;
+
+        #region Timers
+        int timeChecker;
+
+        // Start
+        List<string> startFiveMinuteslater = new List<string>();
+        List<string> startFivteenMinuteslater = new List<string>();
+        List<string> startThirtyMinuteslater = new List<string>();
+        List<string> startAhourlater = new List<string>();
+        List<string> startThreeHourslater = new List<string>();
+        List<string> startSixHourslater = new List<string>();
+        // Stop
+        List<string> stopFiveMinuteslater = new List<string>();
+        List<string> stopFivteenMinuteslater = new List<string>();
+        List<string> stopThirtyMinuteslater = new List<string>();
+        List<string> stopAhourlater = new List<string>();
+        List<string> stopThreeHourslater = new List<string>();
+        List<string> stopSixHourslater = new List<string>();
+        #endregion
 
         public MainForm()
         {
             InitializeComponent();
             ServiceController[] services = ServiceController.GetServices();
-            foreach (ServiceController service in services)
-            {
-                ServiceNamesComboBox.Items.Add(service.ServiceName);
-            }
 
             // Insert to table
             dataGridViewServices.CellClick += dataGridView1_CellContentClick;
@@ -43,6 +56,7 @@ namespace WindowsServiceManager
             comboBox1.SelectedItem = "All";
             LoadServices();
             timer1.Start();
+            FiveMinutes.Start();
             dataGridViewServices.ClearSelection();
 
             Start_Click.Click += Start_ClickItem;
@@ -251,6 +265,137 @@ namespace WindowsServiceManager
 
                 ToolStripMenuItem added = contextMenuStrip1.Items["Add_NonStopServices_Click"] as ToolStripMenuItem;
                 ToolStripMenuItem pinned = contextMenuStrip1.Items["pin_Click"] as ToolStripMenuItem;
+
+                #region Start-Stop Checked
+                ToolStripMenuItem parentMenuItem = contextMenuStrip1.Items["scheduleTimerWorkerToolStripMenuItem"] as ToolStripMenuItem;
+                ToolStripMenuItem startparentMenuItem = parentMenuItem.DropDownItems["startFiveMinutesTool"] as ToolStripMenuItem;
+                ToolStripMenuItem stopparentMenuItem = parentMenuItem.DropDownItems["stopAfterAWhileToolStripMenuItem"] as ToolStripMenuItem;
+
+                // Start
+                ToolStripMenuItem startfiveMinutes = startparentMenuItem.DropDownItems["fiveMinutesTool"] as ToolStripMenuItem;
+                ToolStripMenuItem startfifteenMinutes = startparentMenuItem.DropDownItems["startaFifteenMinutesTool"] as ToolStripMenuItem;
+                ToolStripMenuItem startthirtyMinutes = startparentMenuItem.DropDownItems["startThirtyMinutesTool"] as ToolStripMenuItem;
+                ToolStripMenuItem startAhour = startparentMenuItem.DropDownItems["startAHourTool"] as ToolStripMenuItem;
+                ToolStripMenuItem startThreeHours = startparentMenuItem.DropDownItems["startThreeHoursTool"] as ToolStripMenuItem;
+                ToolStripMenuItem startSixHours = startparentMenuItem.DropDownItems["startSixHoursTool"] as ToolStripMenuItem;
+                // Stop
+                ToolStripMenuItem stopfiveMinutes = stopparentMenuItem.DropDownItems["stopFiveMinutesTool"] as ToolStripMenuItem;
+                ToolStripMenuItem stopfifteenMinutes = stopparentMenuItem.DropDownItems["stopFifteenMinutesTool"] as ToolStripMenuItem;
+                ToolStripMenuItem stopthirtyMinutes = stopparentMenuItem.DropDownItems["stopThirtyMinutesTool"] as ToolStripMenuItem;
+                ToolStripMenuItem stopAhour = stopparentMenuItem.DropDownItems["stopAHourTool"] as ToolStripMenuItem;
+                ToolStripMenuItem stopThreeHours = stopparentMenuItem.DropDownItems["stopThreeHoursTool"] as ToolStripMenuItem;
+                ToolStripMenuItem stopSixHours = stopparentMenuItem.DropDownItems["stopSixHoursTool"] as ToolStripMenuItem;
+
+                // Start
+                if (startFiveMinuteslater.Contains(selectedServiceName))
+                {
+                    startfiveMinutes.Checked = true;
+                }
+                else
+                {
+                    startfiveMinutes.Checked = false;
+                }
+                
+                if (startFivteenMinuteslater.Contains(selectedServiceName))
+                {
+                    startfifteenMinutes.Checked = true;
+                }
+                else
+                {
+                    startfifteenMinutes.Checked = false;
+                }
+                
+                if (startThirtyMinuteslater.Contains(selectedServiceName))
+                {
+                    startthirtyMinutes.Checked = true;
+                }
+                else
+                {
+                    startthirtyMinutes.Checked = false;
+                }
+                
+                if (startAhourlater.Contains(selectedServiceName))
+                {
+                    startAhour.Checked = true;
+                }
+                else
+                {
+                    startAhour.Checked = false;
+                }
+                
+                if (startThreeHourslater.Contains(selectedServiceName))
+                {
+                    startThreeHours.Checked = true;
+                }
+                else
+                {
+                    startThreeHours.Checked = false;
+                }
+                
+                if (startSixHourslater.Contains(selectedServiceName))
+                {
+                    startSixHours.Checked = true;
+                }
+                else
+                {
+                    startSixHours.Checked = false;
+                }
+
+                // Stop
+                if (stopFiveMinuteslater.Contains(selectedServiceName))
+                {
+                    stopfiveMinutes.Checked = true;
+                }
+                else
+                {
+                    stopfiveMinutes.Checked = false;
+                }
+                
+                if (stopFivteenMinuteslater.Contains(selectedServiceName))
+                {
+                    stopfifteenMinutes.Checked = true;
+                }
+                else
+                {
+                    stopfifteenMinutes.Checked = false;
+                }
+                
+                if (stopThirtyMinuteslater.Contains(selectedServiceName))
+                {
+                    stopthirtyMinutes.Checked = true;
+                }
+                else
+                {
+                    stopthirtyMinutes.Checked = false;
+                }
+
+                if (stopAhourlater.Contains(selectedServiceName))
+                {
+                    startAhour.Checked = true;
+                }
+                else
+                {
+                    startAhour.Checked = false;
+                }
+
+                if (stopThreeHourslater.Contains(selectedServiceName))
+                {
+                    stopThreeHours.Checked = true;
+                }
+                else
+                {
+                    stopThreeHours.Checked = false;
+                }
+
+                if (stopSixHourslater.Contains(selectedServiceName))
+                {
+                    stopSixHours.Checked = true;
+                }
+                else
+                {
+                    stopSixHours.Checked = false;
+                }
+                #endregion
 
                 if (Non_Stop_Services.Contains(selectedServiceName))
                 {
@@ -496,11 +641,10 @@ namespace WindowsServiceManager
                     catch
                     {
                         // if cant't process or access
-                        Non_Stop_Services.Remove(selectedServiceName);
                         if (!exitsAnyMessageBox) // dont't stack message boxes
                         {
                             exitsAnyMessageBox = true;
-                            MessageBox.Show("This service can't start", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("This service can't start", $"{selectedServiceName}", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             exitsAnyMessageBox = false;
                         }
                     }
@@ -523,11 +667,10 @@ namespace WindowsServiceManager
                         catch
                         {
                             // if cant't process or access
-                            Non_Stop_Services.Remove(selectedServiceName);
                             if (!exitsAnyMessageBox) // dont't stack message boxes
                             {
                                 exitsAnyMessageBox = true;
-                                MessageBox.Show("This service can't stop", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show("This service can't stop", $"{selectedServiceName}", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 exitsAnyMessageBox = false;
                             }
                         }
@@ -557,11 +700,10 @@ namespace WindowsServiceManager
                     catch
                     {
                         // if cant't process or access
-                        Non_Stop_Services.Remove(selectedServiceName);
                         if (!exitsAnyMessageBox) // dont't stack message boxes
                         {
                             exitsAnyMessageBox = true;
-                            MessageBox.Show("This service can't stop", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("This service can't stop", $"{selectedServiceName}", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             exitsAnyMessageBox = false;
                         }
                     }
@@ -586,7 +728,7 @@ namespace WindowsServiceManager
                         catch
                         {
                             // if cant't process or access
-                            Non_Stop_Services.Remove(selectedServiceName);
+                            isRestarting = false;
                             if (!exitsAnyMessageBox) // dont't stack message boxes
                             {
                                 exitsAnyMessageBox = true;
@@ -647,41 +789,39 @@ namespace WindowsServiceManager
             UpdateAllServiceStatuses();
 
             // Non-Stop Services
-            foreach (DataGridViewRow item in dataGridViewServices.Rows)
+
+            ServiceController[] services = ServiceController.GetServices();
+            foreach (ServiceController item in services)
             {
                 string firstCellValue = "";
                 foreach (string ServiceNames in Non_Stop_Services)
                 {
-                    if (!item.IsNewRow)
+                    firstCellValue = item.ServiceName;
+                    using (ServiceController serviceController = new ServiceController(ServiceNames))
                     {
-                        firstCellValue = item.Cells[0].Value?.ToString();
-
                         if (firstCellValue == ServiceNames)
                         {
                             if (!string.IsNullOrEmpty(ServiceNames) && !string.IsNullOrEmpty(firstCellValue))
                             {
-                                using (ServiceController serviceController = new ServiceController(ServiceNames))
+                                if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
                                 {
-                                    if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
+                                    try
                                     {
-                                        try
+                                        serviceController.Start();
+                                        // Wait for Running
+                                        serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+                                    }
+                                    catch
+                                    {
+                                        // if cant't process or access
+                                        Non_Stop_Services.Remove(ServiceNames);
+                                        if (!exitsAnyMessageBox) // dont't stack message boxes
                                         {
-                                            serviceController.Start();
-                                            // Wait for Running
-                                            serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+                                            exitsAnyMessageBox = true;
+                                            MessageBox.Show("This service can't start", $"{ServiceNames}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                            exitsAnyMessageBox = false;
                                         }
-                                        catch
-                                        {
-                                            // if cant't process or access
-                                            Non_Stop_Services.Remove(ServiceNames);
-                                            if (!exitsAnyMessageBox) // dont't stack message boxes
-                                            {
-                                                exitsAnyMessageBox = true;
-                                                MessageBox.Show("This service can't start", "OK", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                                exitsAnyMessageBox = false;
-                                            }
-                                            break;
-                                        }
+                                        break;
                                     }
                                 }
                             }
@@ -838,28 +978,7 @@ namespace WindowsServiceManager
             Process.Start("services.msc");
         }
 
-        private void GoToServicesButton_Click_1(object sender, EventArgs e)
-        {
-            MainPanel.Visible = true;
-            WorkTimePanel.Visible = false;
-        }
 
-        private void WorkTimerForm_Button_Click_1(object sender, EventArgs e)
-        {
-            MainPanel.Visible = false;
-            WorkTimePanel.Visible = true;
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            MainPanel.Visible = false;
-            WorkTimePanel.Visible = true;
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -869,98 +988,276 @@ namespace WindowsServiceManager
             }
         }
 
-        private void Add_WorkTime_Button_Click(object sender, EventArgs e)
-        {
-            timersCount++;
-            DataGridViewColumn firstColumn = dataGridViewServices.Columns[0];
-            ServiceController[] services = ServiceController.GetServices();
-            try
-            {
-                if (timersCount > 10)
-                {
 
-                    MessageBox.Show("Worker can not be more than ten.", "Limit crossed", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    timersCount--;
-                }
-                else
+        void StartList(List<string> listName)
+        {
+            string firstCellValue = "";
+            using (ServiceController serviceController = new ServiceController(selectedServiceName))
+            {
+                ServiceController[] services = ServiceController.GetServices();
+                foreach (ServiceController item in services)
                 {
-                    int timeInterval = Convert.ToInt32(TimeInterval.Text);
-                    string[] row = new string[2];
-                    if (timersCount < 10)
+                    foreach (string ServiceNames in listName)
                     {
-                        foreach (ServiceController service in services)
+                        firstCellValue = item.ToString();
+
+                        if (firstCellValue == ServiceNames)
                         {
-                            if (service.ServiceName == ServiceNamesComboBox.Text && timeInterval > 0)
+                            if (!string.IsNullOrEmpty(ServiceNames) && !string.IsNullOrEmpty(firstCellValue))
                             {
-                                row[0] = ServiceNamesComboBox.Text.ToString();
-                                row[1] = TimeInterval.Text.ToString();
-                                WorkTimeGrid.Rows.Add(row);
+
+                                if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
+                                {
+                                    try
+                                    {
+                                        serviceController.Start();
+                                        // Wait for Running
+                                        serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+                                    }
+                                    catch
+                                    {
+                                        // if cant't process or access
+                                        listName.Remove(ServiceNames);
+                                        if (!exitsAnyMessageBox) // dont't stack message boxes
+                                        {
+                                            exitsAnyMessageBox = true;
+                                            MessageBox.Show("This service can't start", $"{ServiceNames}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                            exitsAnyMessageBox = false;
+                                        }
+                                        break;
+                                    }
+                                }
                             }
                         }
-                        if (row[0] == null)
-                        {
-                            MessageBox.Show("System can't found service name", "Unmatched", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            timersCount--;
-                        }
-                        else
-                        {
-                            #region Timers
-                            timers = new System.Timers.Timer[timersCount];
-                            timers[timersCount] = new System.Timers.Timer();
-                            timers[timersCount].Interval = Convert.ToInt32(TimeInterval.Text) * 1000;
-                            timers[timersCount].Elapsed += TimerElapsed;
-
-                            timers[timersCount].Start();
-                            #endregion
-                        }
-                    }
-                    else if (timeInterval <= 0)
-                    {
-                        MessageBox.Show("Time Interval's time Couldn't smaller than 1 ", "Unacceptable Number", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        timersCount--;
-
                     }
                 }
             }
-            catch
-            {
-                MessageBox.Show("Time Interval's time Couldn't empty ", "Unacceptable Number", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                timersCount--;
-            }
         }
-        #region Timers Methods
-        private void TimerElapsed(object sender, ElapsedEventArgs e)
+        void StopList(List<string> listName)
         {
-            StartService(TimeInterval.Text);         
-        }
-
-        private void StartService(string serviceName)
-        {
-            try
+            string firstCellValue = "";
+            using (ServiceController serviceController = new ServiceController(selectedServiceName))
             {
-                // ServiceController ile belirtilen servisi başlat
-                using (ServiceController service = new ServiceController(serviceName))
+                ServiceController[] services = ServiceController.GetServices();
+                foreach (ServiceController item in services)
                 {
-                    // Servisin mevcut durumunu kontrol et
-                    if (service.Status == ServiceControllerStatus.Stopped || service.Status == ServiceControllerStatus.StopPending)
+                    foreach (string ServiceNames in listName)
                     {
-                        // Servisi başlat
-                        service.Start();
-                        service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30)); // Başlaması için 30 saniye bekle
-                        MessageBox.Show($"Servis '{serviceName}' başarıyla başlatıldı.");
-                    }
-                    else
-                    {
-                        MessageBox.Show($"Servis '{serviceName}' zaten çalışıyor.");
+                        firstCellValue = item.ToString();
+
+                        if (firstCellValue == ServiceNames)
+                        {
+                            if (!string.IsNullOrEmpty(ServiceNames) && !string.IsNullOrEmpty(firstCellValue))
+                            {
+
+                                if (serviceController.Status != ServiceControllerStatus.Running) // If service not working
+                                {
+                                    try
+                                    {
+                                        serviceController.Stop();
+                                        // Wait for Running
+                                    }
+                                    catch
+                                    {
+                                        // if cant't process or access
+                                        listName.Remove(ServiceNames);
+                                        if (!exitsAnyMessageBox) // dont't stack message boxes
+                                        {
+                                            exitsAnyMessageBox = true;
+                                            MessageBox.Show("This service can't stopped.", $"{ServiceNames}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                            exitsAnyMessageBox = false;
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-            catch (Exception ex)
+        }
+
+        private void FiveMinutes_Tick(object sender, EventArgs e)
+        {
+            timeChecker++;
+
+            StartList(startFiveMinuteslater); // 5 minutes
+            StopList(startFiveMinuteslater);
+
+
+            if (timeChecker % 3 == 0) //15 minutes
             {
-                MessageBox.Show($"Servis başlatılırken hata oluştu: {ex.Message}");
+                StartList(startFiveMinuteslater);
+                StopList(startFivteenMinuteslater);
+            }
+
+            else if (timeChecker % 6 == 0) //30 minutes
+            {
+                StartList(startFiveMinuteslater);
+                StopList(startThirtyMinuteslater);
+            }
+            else if (timeChecker % 12 == 0) // A Hour
+            {
+                StartList(startFiveMinuteslater);
+                StopList(startAhourlater);
+            }
+            else if (timeChecker % 36 == 0) // Three Hours
+            {
+                StartList(startFiveMinuteslater);
+                StopList(startThreeHourslater);
+            }
+            else if (timeChecker % 72 == 0) // Six Hours
+            {
+                StartList(startFiveMinuteslater);
+                StopList(startSixHourslater);
+                timeChecker = 0;
             }
         }
 
+        #region Stop and Start Tool
+        private void fiveMinutesTool_Click(object sender, EventArgs e)
+        {
+            if (!startFiveMinuteslater.Contains(selectedServiceName))
+            {
+                startFiveMinuteslater.Add(selectedServiceName);
+            }
+            else
+            {
+                startFiveMinuteslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void startaFifteenMinutesTool_Click(object sender, EventArgs e)
+        {
+            if (!startFivteenMinuteslater.Contains(selectedServiceName))
+            {
+                startFivteenMinuteslater.Add(selectedServiceName);
+            }
+            else
+            {
+                startFivteenMinuteslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void startThirtyMinutesTool_Click(object sender, EventArgs e)
+        {
+            if (!startFivteenMinuteslater.Contains(selectedServiceName))
+            {
+                startFivteenMinuteslater.Add(selectedServiceName);
+            }
+            else
+            {
+                startFivteenMinuteslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void startAHourTool_Click(object sender, EventArgs e)
+        {
+            if (!startAhourlater.Contains(selectedServiceName))
+            {
+                startAhourlater.Add(selectedServiceName);
+            }
+            else
+            {
+                startAhourlater.Remove(selectedServiceName);
+            }
+        }
+
+        private void startThreeHoursTool_Click(object sender, EventArgs e)
+        {
+            if (!startThreeHourslater.Contains(selectedServiceName))
+            {
+                startThreeHourslater.Add(selectedServiceName);
+            }
+            else
+            {
+                startThreeHourslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void startSixHoursTool_Click(object sender, EventArgs e)
+        {
+            if (!startSixHourslater.Contains(selectedServiceName))
+            {
+                startSixHourslater.Add(selectedServiceName);
+            }
+            else
+            {
+                startSixHourslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void stopFiveMinutesTool_Click(object sender, EventArgs e)
+        {
+            if (!stopFiveMinuteslater.Contains(selectedServiceName))
+            {
+                stopFiveMinuteslater.Add(selectedServiceName);
+            }
+            else
+            {
+                stopFiveMinuteslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void stopFifteenMinutesTool_Click(object sender, EventArgs e)
+        {
+            if (!stopFivteenMinuteslater.Contains(selectedServiceName))
+            {
+                stopFivteenMinuteslater.Add(selectedServiceName);
+            }
+            else
+            {
+                stopFivteenMinuteslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void stopThirtyMinutesTool_Click(object sender, EventArgs e)
+        {
+            if (!stopFivteenMinuteslater.Contains(selectedServiceName))
+            {
+                stopFivteenMinuteslater.Add(selectedServiceName);
+            }
+            else
+            {
+                stopFivteenMinuteslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void stopAHourTool_Click(object sender, EventArgs e)
+        {
+            if (!stopAhourlater.Contains(selectedServiceName))
+            {
+                stopAhourlater.Add(selectedServiceName);
+            }
+            else
+            {
+                stopAhourlater.Remove(selectedServiceName);
+            }
+        }
+
+        private void stopThreeHoursTool_Click(object sender, EventArgs e)
+        {
+            if (!stopThreeHourslater.Contains(selectedServiceName))
+            {
+                stopThreeHourslater.Add(selectedServiceName);
+            }
+            else
+            {
+                stopThreeHourslater.Remove(selectedServiceName);
+            }
+        }
+
+        private void stopSixHoursTool_Click(object sender, EventArgs e)
+        {
+            if (!stopSixHourslater.Contains(selectedServiceName))
+            {
+                stopSixHourslater.Add(selectedServiceName);
+            }
+            else
+            {
+                stopSixHourslater.Remove(selectedServiceName);
+            }
+        }
         #endregion
     }
 }
